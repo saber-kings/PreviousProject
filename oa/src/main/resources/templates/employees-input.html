@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh_CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{_fragments :: head(~{::title})}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${employee.id==null} ? '新增员工' : '修改员工'">新增员工</title>
+    <!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" integrity="sha256-9mbkOfVho3ZPXfM7W8sV2SndrGDuh7wuyLjtsWeTI1Q=" crossorigin="anonymous" />-->
+    <link rel="stylesheet" href="../static/dist/semantic.min.css" />
+    <link rel="stylesheet" href="../static/lib/editormd/css/editormd.min.css" />
+    <link rel="stylesheet" href="../static/css/me.css" />
+</head>
+<body>
+
+<!--导航-->
+<nav th:replace="~{_fragments :: menu(4)}" class="ui inverted attached segment m-padded-tb-mini m-shadow-small">
+    <div class="ui container">
+        <div class="ui inverted secondary stackable menu">
+            <h2 class="ui header item m-top-logo m-padded-mini m-text-thin">
+                <img src="../static/images/logo.png" alt="" class="image rounded">
+                &ensp;人事管理系统
+            </h2>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini user icon"></i>
+                用户
+            </a>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini sitemap icon"></i>
+                部门
+            </a>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini id badge icon"></i>
+                职位
+            </a>
+            <a href="#" class="m-item item m-mobile-hide active">
+                <i class="mini users icon"></i>
+                员工
+            </a>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini bullhorn icon"></i>
+                公告
+            </a>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini download icon"></i>
+                下载
+            </a>
+            <div class="m-item right menu m-mobile-hide">
+                <div class="ui dropdown item">
+                    <div class="text">
+                        <img class="ui avatar image" src="https://picsum.photos/id/1005/100/100">
+                        <span>Test</span>
+                    </div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <a href="#" class="item">注销</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="javascript:;" class="ui menu toggle black icon button m-right-top m-mobile-show">
+        <i class="sidebar icon"></i>
+    </a>
+</nav>
+<div class="ui attached pointing menu">
+    <div class="ui container">
+        <div class="right menu">
+            <a href="#" th:if="${session.user.status}" th:href="@{/hrm/employees/input}" class="blue active item">
+                <span th:text="${employee.id==null} ? '新增' : '修改'">新增</span>
+            </a>
+            <a href="#" th:href="@{/hrm/employees}" class="item">列表</a>
+        </div>
+    </div>
+</div>
+
+<br><br><br><br><br><br>
+<!--中间内容-->
+<div class="m-container-small m-padded-tb-big animated fadeIn">
+    <div class="segment info"></div>
+    <br>
+    <div class="ui container">
+        <div class="ui secondary stackable segment form">
+            <form id="employee-form" action="#" th:object="${employee}" th:action="@{/hrm/employees}" method="post"
+                  class="ui form">
+                <input type="hidden" name="oldEmpId" th:value="${employee.getEmpId()}">
+                <input type="hidden" name="id" th:value="*{id}">
+                <div class="two fields">
+                    <div class="required field">
+                        <label>员工编号</label>
+                        <div class="ui icon input">
+                            <input type="text" name="empId" th:value="*{empId}" placeholder="员工编号">
+                            <i class="sort content ascending icon"></i>
+                        </div>
+                    </div>
+                    <div class="required field">
+                        <label>姓名</label>
+                        <div class="ui icon input">
+                            <input type="text" name="name" th:value="*{name}" placeholder="姓名">
+                            <i class="user icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="two fields">
+                    <div class="required field">
+                        <label>部门</label>
+                        <div class="ui dept selection dropdown">
+                            <input type="hidden" name="department.id" th:value="*{department}!=null?*{department.id}:0">
+                            <i class="dropdown icon"></i>
+                            <div class="default text">部门</div>
+                            <div class="menu">
+                                <div th:each="department : ${departments}" class="item" data-value="1"
+                                     th:data-value="${department.id}"
+                                     th:text="${department.departName}">
+                                    秘书部
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="required field">
+                        <label>职位</label>
+                        <div class="ui job selection dropdown">
+                            <input type="hidden" name="job.id" th:value="*{job}!=null?*{job.id}:0">
+                            <i class="dropdown icon"></i>
+                            <div class="default text">职位</div>
+                            <div class="menu">
+                                <div th:each="job : ${jobs}" class="item" data-value="1" th:data-value="${job.id}"
+                                     th:text="${job.name}">
+                                    Java开发工程师
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="two fields">
+                    <div class="field">
+                        <label>性别</label>
+                        <div class="ui selection dropdown">
+                            <input type="hidden" name="sex" th:value="*{sex}">
+                            <div class="default text">性别</div>
+                            <i class="dropdown icon"></i>
+                            <div class="menu">
+                                <div class="item" data-value="1">男</div>
+                                <div class="item" data-value="0">女</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="required field">
+                        <label>年龄</label>
+                        <div class="ui icon input">
+                            <input type="text" onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')" maxlength="3"
+                                   name="age" th:value="*{age}" placeholder="年龄">
+                            <i class="birthday icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="two fields">
+                    <div class="required field">
+                        <label>手机</label>
+                        <div class="ui icon input">
+                            <input type="text" maxlength="11" onkeyup="this.value=this.value.replace(/\D/g,'')"
+                                   name="phone" th:value="*{phone}" placeholder="手机">
+                            <i class="mobile icon"></i>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>邮箱</label>
+                        <div class="ui icon input">
+                            <input type="email" name="email" th:value="*{email}" placeholder="邮箱">
+                            <i class="envelope icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="two fields">
+                    <div class="required field">
+                        <label>学历</label>
+                        <div class="ui selection search dropdown">
+                            <input type="hidden" name="education" th:value="*{education}">
+                            <div class="default text">请选择学历</div>
+                            <i class="dropdown icon"></i>
+                            <div class="menu">
+                                <div class="item" data-value="专科">专科</div>
+                                <div class="item" data-value="本科">本科</div>
+                                <div class="item" data-value="硕士研究生">硕士研究生</div>
+                                <div class="item" data-value="博士研究生">博士研究生</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="required field">
+                        <label>工资</label>
+                        <div class="ui icon input">
+                            <input type="text" name="wage" th:value="*{wage}" placeholder="工资">
+                            <i class="jpy icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="field">
+                    <label>备注</label>
+                    <textarea th:text="*{remark}" name="remark" placeholder="备注"></textarea>
+                </div>
+
+                <div class="ui error message"></div>
+                <!--/*/
+                    <div class="ui negative message" th:if="${#fields.hasErrors('empId')}">
+                        <i class="close icon"></i>
+                        <div class="header">验证失败:</div>
+                        <p th:errors="*{empId}">提交的信息不符合规则</p>
+                    </div>
+                /*/-->
+
+                <div class="ui right aligned container">
+                    <button type="button" class="ui button" onclick="window.history.go(-1)">返回</button>
+                    <button type="button" th:if="${session.user.status}" class="ui reset orange button">重置</button>
+                    <button type="button" th:if="${session.user.status}" id="publish-btn" class="ui blue button">提交</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<br><br><br><br><br><br>
+<!--底部-->
+<footer th:replace="~{_fragments :: footer}" class="ui inverted vertical segment m-padded-tb">
+    <div class="ui center aligned container">
+        <p class="m-text-space m-opacity-tiny">
+            Copyright © 2019 Hrm · 鲁ICP备19001733号-1 · All Rights Reserved Yan Zhaofei
+        </p>
+    </div>
+</footer>
+
+<!--/*/<th:block th:replace="~{_fragments :: script}">/*/-->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.2/dist/jquery.min.js"></script>
+<script src="../static/dist/semantic.min.js"></script>
+<script src="../static/lib/editormd/editormd.min.js"></script>
+<!--/*/</th:block>/*/-->
+<script>
+
+    $('#publish-btn').click(function () {
+        if ($('.ui.form').form({
+            fields: {
+                empId: {
+                    identifier: 'empId',
+                    rules: [
+                        {
+                        type: 'empty',
+                        prompt: '请输入员工编号'
+                        },
+                        {
+                            type: 'exactLength[6]',
+                            prompt: '员工编号长度必须为六位'
+                        }
+                    ]
+                },
+                name: {
+                    identifier: 'name',
+                    rules: [{
+                        type: 'empty',
+                        prompt: '请输入员工姓名'
+                    }]
+                },
+                departmentId : {
+                    identifier : 'department.id',
+                    rules : [{
+                        type : 'empty',
+                        prompt : '请选择部门'
+                    }]
+                },
+                jobId : {
+                    identifier : 'job.id',
+                    rules : [{
+                        type : 'empty',
+                        prompt : '请选择职位'
+                    }]
+                },
+                age: {
+                    identifier: 'age',
+                    rules: [{
+                        type: 'empty',
+                        prompt: '请输入年龄'
+                    }]
+                },
+                phone: {
+                    identifier: 'phone',
+                    rules: [
+                        {
+                            type: 'empty',
+                            prompt: '请输入手机号'
+                        },
+                        {
+                            type: 'exactLength[11]',
+                            prompt: '手机号必须是11位'
+                        }
+                    ]
+                },
+                education: {
+                    identifier: 'education',
+                    rules: [{
+                        type: 'empty',
+                        prompt: '请选择学历'
+                    }]
+                },
+                wage: {
+                    identifier: 'wage',
+                    rules: [
+                        {
+                            type: 'empty',
+                            prompt: '请输入工资'
+                        },
+                        {
+                            type: 'decimal',
+                            prompt: '工资必须是数字'
+                        }
+                    ]
+                }
+            }
+        })) {
+            $('#employee-form').submit();
+        }
+    });
+
+    //消息提示关闭初始化
+    $('.message .close')
+        .on('click', function () {
+            $(this)
+                .closest('.message')
+                .transition('fade')
+            ;
+        })
+    ;
+
+</script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js" integrity="sha256-t8GepnyPmw9t+foMh3mKNvcorqNHamSKtKRxxpUEgFI=" crossorigin="anonymous"></script>-->
+</body>
+</html>

@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh_CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{_fragments :: head(~{::title})}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>公告管理</title>
+    <!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" integrity="sha256-9mbkOfVho3ZPXfM7W8sV2SndrGDuh7wuyLjtsWeTI1Q=" crossorigin="anonymous" />-->
+    <link rel="stylesheet" href="../static/dist/semantic.min.css"/>
+    <link rel="stylesheet" href="../static/css/me.css"/>
+</head>
+<body>
+
+<!--导航-->
+<nav th:replace="~{_fragments :: menu(5)}" class="ui inverted attached segment m-padded-tb-mini m-shadow-small">
+    <div class="ui container">
+        <div class="ui inverted secondary stackable menu">
+            <h2 class="ui header item m-top-logo m-padded-mini m-text-thin">
+                <img src="../static/images/logo.png" alt="" class="image rounded">
+                &ensp;人事管理系统
+            </h2>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini user icon"></i>
+                用户
+            </a>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini sitemap icon"></i>
+                部门
+            </a>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini id badge icon"></i>
+                职位
+            </a>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini users icon"></i>
+                员工
+            </a>
+            <a href="#" class="m-item item m-mobile-hide active">
+                <i class="mini bullhorn icon"></i>
+                公告
+            </a>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini download icon"></i>
+                下载
+            </a>
+            <div class="m-item right menu m-mobile-hide">
+                <div class="ui dropdown item">
+                    <div class="text">
+                        <img class="ui avatar image" src="https://picsum.photos/id/1005/100/100">
+                        <span>Test</span>
+                    </div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <a href="#" class="item">注销</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="javascript:;" class="ui menu toggle black icon button m-right-top m-mobile-show">
+        <i class="sidebar icon"></i>
+    </a>
+</nav>
+<div class="ui attached pointing menu">
+    <div class="ui container">
+        <div class="right menu">
+            <a href="#" th:if="${session.user.status}" th:href="@{/hrm/notices/input}" class="item">新增</a>
+            <a href="#" th:href="@{/hrm/notices}"  class="blue active item">列表</a>
+        </div>
+    </div>
+</div>
+
+<div th:if="${page.content.size()}<4">
+    <br><br><br><br><br>
+</div>
+<div class="total br" style="display: none;">
+    <br><br><br><br><br>
+</div>
+<br><br><br><br>
+
+<!--中间内容-->
+<div class="m-container-big m-padded-tb-big animated fadeIn">
+    <div class="segment info"></div>
+    <br>
+    <div class="ui container">
+        <!--header-->
+        <div class="ui secondary stackable center aligned segment form">
+            <input type="hidden" name="page">
+            <div class="inline fields m-mobile-flex-wrap" style="margin: 0 0 0.1em !important;">
+                <div class="field m-padded-tb-mini">
+                    <input type="text" name="title" placeholder="公告名称">
+                </div>
+                <div class="field m-padded-tb-mini">
+                    <input type="text" name="content" placeholder="公告内容">
+                </div>
+                <div class="field m-padded-tb-mini">
+                    <button type="button" id="search-btn" class="ui mini blue button">
+                        <i class="search icon"></i>搜索
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="ui dimmer modals page transition visible">
+            <div class="ui small ifDelete modal transition visible active" style="margin-top: -98px;">
+                <i class="close icon"></i>
+                <div class="header">删除确认 </div>
+                <div class="content">
+                    <p>你确定删除这些公告的信息吗？</p>
+                </div>
+                <div class="actions">
+                    <div class="ui negative right labeled icon button">
+                        取消
+                        <i class="remove icon"></i>
+                    </div>
+                    <div class="ui positive right labeled icon button">
+                        确定
+                        <i class="checkmark icon"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="ui mini modal message" style="margin-top: -98px;">
+                <div class="header">提示:</div>
+                <div class="content">
+                    <!--/*@thymesVar id="message" type="java.lang.String"*/-->
+                    <p>删除成功！</p>
+                </div>
+                <div class="actions">
+                    <div class="ui primary right button">
+                        确定
+                    </div>
+                </div>
+            </div>
+            <div id="preview-notice-info" class="ui long batch modal transition scrolling visible active"
+                 style="top: 100px;">
+                <!--/*@thymesVar id="preNotice" type="cn.saberking.oa.domain.Notice"*/-->
+                <th:block th:fragment="preview" th:if="${preNotice!=null}">
+                    <i class="close icon"></i>
+                    <div class="header" th:text="${preNotice.title}">查看员工详细信息</div>
+                    <div class="content">
+                        <div class="typo typo-selection js-toc-content description" th:utext="${preNotice.content}"></div>
+                    </div>
+                    <div class="actions">
+                        <div class="ui primary button cancel">确认 <i class="right chevron icon"></i></div>
+                    </div>
+                </th:block>
+            </div>
+        </div>
+
+        <div id="table-container">
+            <table th:fragment="noticeList" class="ui compact blue celled table" style="border-spacing: 2px;">
+                <thead>
+                <tr>
+                    <th th:if="${session.user.status}" class="ui center aligned header m-font-size">
+                        <div class="ui checkbox">
+                            <input type="checkbox" placeholder="全选"  id="ca" onclick="pitchOn(this)">
+                            <label class="ss">全选</label>
+                        </div>
+                    </th>
+                    <th class="ui center aligned header m-font-size">公告名称</th>
+                    <th class="ui center aligned header m-font-size">公告内容</th>
+                    <th class="ui center aligned header m-font-size">创建时间</th>
+                    <th class="ui center aligned header m-font-size">发布人</th>
+                    <th class="ui center aligned header m-font-size">操作</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="notice,iterStat : ${page.content}">
+                    <!--/*@thymesVar id="notice" type="cn.saberking.oa.domain.Notice"*/-->
+                    <td th:if="${session.user.status}" class="ui center aligned">
+                        <input type="hidden" name="notIds">
+                        <div class="ui fitted checkbox">
+                            <input type="checkbox" name="cars" th:data-id="*{notice.id}" onclick="isSelectAll()">
+                            <label></label>
+                        </div>
+                    </td>
+                    <td class="ui center aligned" th:text="${notice.title}">放假啦</td>
+                    <td class="ui center aligned">因使用MarkDown语法，请使用预览查看</td>
+                    <td class="ui center aligned" th:text="${#dates.format(notice.createDate,'yyyy-MM-dd HH:mm')}">
+                        2019-10-26 20:30
+                    </td>
+                    <td class="ui center aligned" th:text="${notice.user.username}">小明</td>
+                    <td class="ui center aligned">
+                        <a href="#" th:if="${session.user.status}" th:href="@{/hrm/notices/{id}/input(id=${notice.id})}"
+                           class="ui mini blue button">编辑</a>
+                        <button th:data-id="${notice.id}"
+                           onclick="previewNotice(this)" class="ui mini teal button">预览</button>
+                    </td>
+                </tr>
+                </tbody>
+                <script>
+                    function pitchOn(obj){
+                        const check = $("[name='cars']");
+                        const txt = $(".ss");
+                        if(obj.checked){
+                            txt[0].innerText="取消";
+                        }else{
+                            txt[0].innerText="全选";
+                        }
+                        for(let i=0; i<check.length; i++){
+                            check[i].checked=obj.checked;
+                        }
+                    }
+                    function isSelectAll() {
+                        let checkedNum = 0;
+                        const check = $("[name='cars']");
+                        const txt = $(".ss");
+                        for(let i=0; i<check.length; i++){
+                            if (check[i].checked){
+                                checkedNum++;
+                            }
+                        }
+                        if (checkedNum===check.length) {
+                            txt[0].innerText="取消";
+                            $("#ca").prop("checked", true);
+                        }else {
+                            txt[0].innerText="全选";
+                            $("#ca").prop("checked", false);
+                        }
+                    }
+                </script>
+
+                <tfoot>
+                <tr>
+                    <th colspan="6">
+                        <div class="ui mini pagination menu" th:if="${page.totalPages}>1">
+                            <a onclick="page(this)" th:data-page="0" class="item"
+                               th:unless="${page.first}">
+                                <i class="icon angle double left"></i>
+                            </a>
+                            <a onclick="page(this)" th:data-page="${page.number}-1" class="item"
+                               th:unless="${page.first}">
+                                <i class="icon angle left"></i>
+                            </a>
+                            <a onclick="page(this)" th:data-page="${page.number}+1" class="item"
+                               th:unless="${page.last}">
+                                <i class="icon angle right"></i>
+                            </a>
+                            <a onclick="page(this)" id="last" th:data-page="${page.totalPages}-1" class="item"
+                               th:unless="${page.last}">
+                                <i class="icon angle double right"></i>
+                            </a>
+                            <a href="javascript:;" class="item">
+                                共<span th:text="${page.totalPages}">5</span>页
+                            </a>
+                            <a href="javascript:;" class="item">
+                                总计<span id="totalNum" th:text="${page.totalElements}">10</span>条
+                            </a>
+                        </div>
+                        <a href="#" th:if="${session.user.status}" th:href="@{/hrm/notices/input}"
+                        class="ui mini right floated blue button m-margin-top-mini">新增</a>
+                        <a href="javascript:void(0)" class="ui mini right floated orange button m-margin-top-mini"
+                           iconCls="icon-printer" plain="true"
+                        onclick="RMMPrint()">打印</a>
+                        <button th:if="${session.user.status}" type="button" id="batch-delete" onclick="ifBatchDel()"
+                           class="ui mini right floated yellow button m-margin-top-mini">
+                            <i class="warning sign icon"></i>批量删除
+                        </button>
+                    </th>
+                </tr>
+                </tfoot>
+                <script>
+                    function ifBatchDel() {
+
+                        const check = $("[name='cars']:checked");
+                        if (check.length!==0){
+                            $('.ui.small.ifDelete.modal')
+                                .modal({
+                                    closable  : false,
+                                    onDeny    : function(){
+                                        return true;
+                                    },
+                                    onApprove : function() {
+                                        batchDelete();
+                                        return true;
+                                    }
+                                })
+                                .modal('show')
+                            ;
+
+                        }
+
+                    }
+
+                    function batchDelete() {
+                        const check = $("[name='cars']:checked");
+                        let varNotIds = '';
+                        const notIds = $("[name='notIds']");
+                        for (let i = 0; i < check.length; i++) {
+                            if (varNotIds===''){
+                                varNotIds = $(check[i]).data("id");
+                            }else {
+                                varNotIds += ','+$(check[i]).data("id");
+                            }
+                            console.log(varNotIds);
+                        }
+                        notIds.val(varNotIds);
+                        $("#table-container").load(/*[[@{/oa/hrm/notices/delete}]]*/"/oa/hrm/notices/delete", {
+                            notIds: notIds.val(),
+                            title: $("[name='title']").val(),
+                            content: $("[name='content']").val(),
+                            page: $("[name='page']").val()
+                        });
+                        $('.ui.mini.modal.message').modal('show');
+                    }
+                </script>
+            </table>
+
+            <div class="ui success message" th:unless="${#strings.isEmpty(message)}">
+                <i class="close icon"></i>
+                <div class="header">提示:</div>
+                <!--/*@thymesVar id="message" type="java.lang.String"*/-->
+                <p th:text="${message}">恭喜，操作成功！</p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div th:if="${page.content.size()}<4">
+    <br><br><br><br><br>
+</div>
+<div class="total br" style="display: none;">
+    <br><br><br><br><br>
+</div>
+<br><br><br><br>
+
+<!--底部-->
+<footer th:replace="~{_fragments :: footer}" class="ui inverted vertical segment m-padded-tb">
+    <div class="ui center aligned container">
+        <p class="m-text-space m-opacity-tiny">
+            Copyright © 2019 Hrm · 鲁ICP备19001733号-1 · All Rights Reserved Yan Zhaofei
+        </p>
+    </div>
+</footer>
+<!--/*/<th:block th:replace="~{_fragments :: script}">/*/-->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.2/dist/jquery.min.js"></script>
+<script src="../static/dist/semantic.min.js" th:src="@{/dist/semantic.min.js}"></script>
+<script src="../static/js/jquery.jqprint-0.3.js" th:src="@{/js/jquery.jqprint-0.3.js}"></script>
+<!--/*/</th:block>/*/-->
+<script>
+
+    $('.ui.dimmer.modals.page').modal('hide');
+    $('.ui.small.ifDelete.modal').modal('hide');
+    $('.ui.mini.modal.message').modal('hide');
+    $('.ui.long.batch.modal').modal('hide');
+
+    $(".ui.primary.button.cancel")
+        .on('click', function () {
+        $('.ui.long.batch.modal').modal('hide');
+    });
+
+    $(".ui.primary.right.button")
+        .on('click', function () {
+            $('.ui.mini.modal.message').modal('hide');
+    });
+
+
+    function previewNotice(obj){
+        let previewId = $(obj).data("id");
+        $("#preview-notice-info").load(/*[[@{/oa/hrm/notices/preview}]]*/"/oa/hrm/notices/preview", {
+            id: previewId
+        });
+        $('.ui.dimmer.modals.page').css('overflow-y', 'scroll');
+        $('.ui.long.batch.modal').modal('show');
+    }
+
+    //消息提示关闭初始化
+    $('.message .close')
+        .on('click', function () {
+            $(this)
+                .closest('.message')
+                .transition('fade')
+            ;
+        })
+    ;
+
+    function page(obj) {
+        $("[name='page']").val($(obj).data("page"));
+        loadData();
+        showBr();
+    }
+    function showBr() {
+        let thisPageNum = $("#totalNum").text()%8;
+        let last = $("#last").length>0;
+        if (last){
+            if (thisPageNum>=0&&thisPageNum<=5) {
+                $(".total.br").show();
+            } else {
+                $(".total.br").hide();
+            }
+        } else {
+            $(".total.br").hide();
+        }
+    }
+
+    $('#search-btn').click(function () {
+        $("[name='page']").val(0);
+        loadData();
+        $(".total.br").show();
+    });
+
+    function loadData() {
+        $("#table-container").load(/*[[@{/oa/hrm/notices/search}]]*/"/oa/hrm/notices/search", {
+            title: $("[name='title']").val(),
+            content: $("[name='content']").val(),
+            page: $("[name='page']").val()
+        });
+    }
+    function RMMPrint(){
+        $("#table-container").jqprint();
+    }
+</script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js" integrity="sha256-t8GepnyPmw9t+foMh3mKNvcorqNHamSKtKRxxpUEgFI=" crossorigin="anonymous"></script>-->
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh_CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{_fragments :: head(~{::title})}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>职位管理</title>
+    <!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" integrity="sha256-9mbkOfVho3ZPXfM7W8sV2SndrGDuh7wuyLjtsWeTI1Q=" crossorigin="anonymous" />-->
+    <link rel="stylesheet" href="../static/dist/semantic.min.css"/>
+    <link rel="stylesheet" href="../static/css/me.css"/>
+</head>
+<body>
+
+<!--导航-->
+<nav th:replace="~{_fragments :: menu(3)}" class="ui inverted attached segment m-padded-tb-mini m-shadow-small">
+    <div class="ui container">
+        <div class="ui inverted secondary stackable menu">
+            <h2 class="ui header item m-top-logo m-padded-mini m-text-thin">
+                <img src="../static/images/logo.png" alt="" class="image rounded">
+                &ensp;人事管理系统
+            </h2>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini user icon"></i>
+                用户
+            </a>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini sitemap icon"></i>
+                部门
+            </a>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini id badge icon"></i>
+                职位
+            </a>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini users icon"></i>
+                员工
+            </a>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini bullhorn icon"></i>
+                公告
+            </a>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini download icon"></i>
+                下载
+            </a>
+            <div class="m-item right menu m-mobile-hide">
+                <div class="ui dropdown item">
+                    <div class="text">
+                        <img class="ui avatar image" src="https://picsum.photos/id/1005/100/100">
+                        <span>Test</span>
+                    </div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <a href="#" class="item">注销</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="javascript:;" class="ui menu toggle black icon button m-right-top m-mobile-show">
+        <i class="sidebar icon"></i>
+    </a>
+</nav>
+<div class="ui attached pointing menu">
+    <div class="ui container">
+        <div class="right menu">
+            <a href="#" th:if="${session.user.status}" th:href="@{/hrm/jobs/input}" class="item">新增</a>
+            <a href="#" th:href="@{/hrm/jobs}"  class="blue active item">列表</a>
+        </div>
+    </div>
+</div>
+
+<div th:if="${page.content.size()}<4">
+    <br><br><br><br><br>
+</div>
+<div class="total br" style="display: none;">
+    <br><br><br><br><br>
+</div>
+<br><br><br><br>
+
+<!--中间内容-->
+<div class="m-container-big m-padded-tb-big animated fadeIn">
+    <div class="segment info"></div>
+    <br>
+    <div class="ui container">
+        <!--header-->
+        <div class="ui segment form">
+            <input type="hidden" name="page">
+            <div class="inline fields" style="margin: 0 0 0.1em !important;">
+                <div class="field">
+                    <input type="text" name="queryName" placeholder="职位名称">
+                </div>
+                <div class="field">
+                    <button type="button" id="search-btn" class="ui mini blue button">
+                        <i class="search icon"></i>搜索
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="table-container">
+            <table th:fragment="jobList" class="ui compact blue celled table" style="border-spacing: unset;">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th class="ui center aligned header m-font-size">职位名称</th>
+                    <th class="ui center aligned header m-th-overflow-hidden m-font-size">详细描述</th>
+                    <th class="ui center aligned header m-font-size">创建时间</th>
+                    <th class="ui center aligned header m-font-size">操作</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="job,iterStat : ${page.content}">
+                    <!--/*@thymesVar id="job" type="cn.saberking.oa.domain.Job"*/-->
+                    <td class="ui center aligned" th:text="${iterStat.count}">1</td>
+                    <td class="ui center aligned" th:text="${job.name}">admin</td>
+                    <td class="ui center aligned m-td-overflow-hidden" th:text="${job.remark}">栾兆飞</td>
+                    <td class="ui center aligned" th:text="${#dates.format(job.createDate,'yyyy-MM-dd')}">
+                        2019-10-26 09:45
+                    </td>
+                    <td class="ui center aligned">
+                        <a href="#" th:text="${session.user.status?'编辑':'查看'}" th:href="@{/hrm/jobs/{id}/input(id=${job.id})}"
+                           class="ui mini blue button">编辑</a>
+                        <a href="#" th:if="${session.user.status}" th:href="@{/hrm/jobs/{id}/delete(id=${job.id})}"
+                           class="ui mini red button">删除</a>
+                    </td>
+                </tr>
+                </tbody>
+
+                <tfoot>
+                <tr>
+                    <th colspan="7">
+                        <div class="ui mini pagination menu" th:if="${page.totalPages}>1">
+                            <a onclick="page(this)" th:data-page="0" class="item"
+                               th:unless="${page.first}">
+                                <i class="icon angle double left"></i>
+                            </a>
+                            <a onclick="page(this)" th:data-page="${page.number}-1" class="item"
+                               th:unless="${page.first}">
+                                <i class="icon angle left"></i>
+                            </a>
+                            <a onclick="page(this)" th:data-page="${page.number}+1" class="item"
+                               th:unless="${page.last}">
+                                <i class="icon angle right"></i>
+                            </a>
+                            <a onclick="page(this)" id="last" th:data-page="${page.totalPages}-1" class="item"
+                               th:unless="${page.last}">
+                                <i class="icon angle double right"></i>
+                            </a>
+                            <a href="javascript:;" class="item">
+                                共<span th:text="${page.totalPages}">5</span>页
+                            </a>
+                            <a href="javascript:;" class="item">
+                                总计<span id="totalNum" th:text="${page.totalElements}">10</span>条
+                            </a>
+                        </div>
+                        <a href="#" th:if="${session.user.status}" th:href="@{/hrm/jobs/input}"
+                        class="ui mini right floated blue button m-margin-top-mini">新增</a>
+                        <a href="javascript:void(0)" class="ui mini right floated orange button m-margin-top-mini"
+                           iconCls="icon-printer" plain="true"
+                           onclick="RMMPrint()">打印</a>
+                    </th>
+                </tr>
+                </tfoot>
+            </table>
+
+            <div class="ui success message" th:unless="${#strings.isEmpty(message)}">
+                <i class="close icon"></i>
+                <div class="header">提示:</div>
+                <!--/*@thymesVar id="message" type="java.lang.String"*/-->
+                <p th:text="${message}">恭喜，操作成功！</p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div th:if="${page.content.size()}<4">
+    <br><br><br><br><br>
+</div>
+<div class="total br" style="display: none;">
+    <br><br><br><br><br>
+</div>
+<br><br><br><br>
+
+<!--底部-->
+<footer th:replace="~{_fragments :: footer}" class="ui inverted vertical segment m-padded-tb">
+    <div class="ui center aligned container">
+        <p class="m-text-space m-opacity-tiny">
+            Copyright © 2019 Hrm · 鲁ICP备19001733号-1 · All Rights Reserved Yan Zhaofei
+        </p>
+    </div>
+</footer>
+
+<!--/*/<th:block th:replace="~{_fragments :: script}">/*/-->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.2/dist/jquery.min.js"></script>
+<script src="../static/dist/semantic.min.js" th:src="@{/dist/semantic.min.js}"></script>
+<script src="../static/js/jquery.jqprint-0.3.js" th:src="@{/js/jquery.jqprint-0.3.js}"></script>
+<!--/*/</th:block>/*/-->
+<script>
+    //消息提示关闭初始化
+    $('.message .close')
+        .on('click', function () {
+            $(this)
+                .closest('.message')
+                .transition('fade')
+            ;
+        })
+    ;
+
+    function page(obj) {
+        $("[name='page']").val($(obj).data("page"));
+        loadData();
+        showBr();
+    }
+
+    function showBr() {
+        let thisPageNum = $("#totalNum").text()%8;
+        let last = $("#last").length>0;
+        if (last){
+            if (thisPageNum>=0&&thisPageNum<=5) {
+                $(".total.br").show();
+            } else {
+                $(".total.br").hide();
+            }
+        } else {
+            $(".total.br").hide();
+        }
+    }
+
+    $('#search-btn').click(function () {
+        $("[name='page']").val(0);
+        loadData();
+        $(".total.br").show();
+    });
+
+    function loadData() {
+        $("#table-container").load(/*[[@{/oa/hrm/jobs/search}]]*/"/oa/hrm/jobs/search", {
+            queryName: $("[name='queryName']").val(),
+            page: $("[name='page']").val()
+        });
+    }
+    function RMMPrint(){
+        $("#table-container").jqprint();
+    }
+</script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js" integrity="sha256-t8GepnyPmw9t+foMh3mKNvcorqNHamSKtKRxxpUEgFI=" crossorigin="anonymous"></script>-->
+</body>
+</html>

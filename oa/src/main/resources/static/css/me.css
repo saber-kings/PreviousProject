@@ -1,0 +1,401 @@
+html,body{height:100% !important;}
+body {
+    background: url("../images/bg.png");
+}
+
+@font-face {
+    font-family: 'A770-Roman-Regular';
+    src: url('../fonts/A770ROMANREGULAR.eot');
+    src: url('../fonts/A770ROMANREGULAR.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/A770ROMANREGULAR.woff2') format('woff2'),
+    url('../fonts/A770ROMANREGULAR.woff') format('woff'),
+    url('../fonts/A770ROMANREGULAR.ttf') format('truetype'),
+    url('../fonts/A770ROMANREGULAR.svg#A770ROMANREGULAR') format('svg');
+}
+
+@font-face {
+    font-family: 'A771-Roman-Bold';
+    src: url('../fonts/A771ROMANBOLD.eot');
+    src: url('../fonts/A771ROMANBOLD.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/A771ROMANBOLD.woff2') format('woff2'),
+    url('../fonts/A771ROMANBOLD.woff') format('woff'),
+    url('../fonts/A771ROMANBOLD.ttf') format('truetype'),
+    url('../fonts/A771ROMANBOLD.svg#A771ROMANBOLD') format('svg');
+}
+
+.m-top-logo {
+    color: #e8e8e8 !important;
+}
+
+.m-login-bg {
+    background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    opacity: 1;
+    z-index: -9999;
+}
+#bg {
+    position: absolute;
+    background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: -5000;
+}
+
+.m-login-form-bg {
+    background: url("../images/bg-white-lock.png");
+    border-radius: 4px;
+}
+
+.m-padded-mini {
+    padding: 0.2em !important;
+}
+
+.m-padded-tiny {
+    padding: 0.3em !important;
+}
+
+.m-padded {
+    padding: 1em !important;
+}
+
+.m-padded-tb-mini {
+    padding-top: 0.2em !important;
+    padding-bottom: 0.2em !important;
+}
+
+.m-padded-tb-tiny {
+    padding-top: 0.3em !important;
+    padding-bottom: 0.3em !important;
+}
+
+.m-padded-tb-small {
+    padding-top: 0.5em !important;
+    padding-bottom: 0.5em !important;
+}
+
+.m-padded-tb {
+    padding-top: 1em !important;
+    padding-bottom: 1em !important;
+}
+
+.m-padded-tb-large {
+    padding-top: 2em !important;
+    padding-bottom: 2em !important;
+}
+
+.m-padded-tb-big {
+    padding-top: 3em !important;
+    padding-bottom: 3em !important;
+}
+
+.m-padded-bottom-big {
+    padding-bottom: 6em !important;
+}
+
+.m-padded-tb-huge {
+    padding-top: 4em !important;
+    padding-bottom: 4em !important;
+}
+
+.m-padded-tb-massive {
+    padding-top: 5em !important;
+    padding-bottom: 5em !important;
+}
+
+.m-padded-lr-responsive {
+    padding-left: 4em !important;
+    padding-right: 4em !important;
+}
+
+.m-padded-lr-responsive-mini {
+    padding-left: 1em !important;
+    padding-right: 1em !important;
+}
+
+.m-padded-lr-responsive-small {
+    padding-left: 2em !important;
+    padding-right: 2em !important;
+}
+
+/*--------text--------*/
+.m-text {
+    font-weight: 300 !important;
+    letter-spacing: 1px !important;
+    line-height: 1.8 !important;
+}
+
+.m-text-font-default {
+    font-family: "Microsoft YaHei", Helvetica, "Meiryo UI", "Malgun Gothic", "Segoe UI", "Trebuchet MS", "Monaco", monospace, Tahoma, STXihei, "华文细黑", STHeiti, "Helvetica Neue", "Droid Sans", "wenquanyi micro hei", FreeSans, Arimo, Arial, SimSun, "宋体", Heiti, "黑体", sans-serif, normal;
+}
+
+.m-text-font-en-oblique {
+    /*font-family: "YaHei Consolas Hybrid", Consolas, "Meiryo UI", "Malgun Gothic", "Segoe UI", "Trebuchet MS", Helvetica, monospace, monospace;*/
+    font-family: A770-Roman-Regular, sans-serif, normal;
+}
+
+.m-text-font-01 {
+    font-family: 'Zhi Mang Xing', cursive, sans-serif, normal;
+}
+
+.m-text-thin {
+    font-weight: 300 !important;
+}
+
+.m-text-size {
+    font-size: 20px;
+}
+
+.m-font-size-small {
+    font-size: .5em !important;
+}
+
+.m-font-size {
+    font-size: 1em !important;
+}
+
+.m-text-space {
+    letter-spacing: 1px !important;
+}
+
+.m-text-lined {
+    line-height: 1.8 !important;
+}
+
+.m-text-lined-initial {
+    vertical-align: initial !important;
+}
+
+.m-text-lined-align {
+    vertical-align: text-bottom !important;
+}
+
+.m-text-lined-middle {
+    vertical-align: middle !important;
+}
+
+/*--------margin--------*/
+.m-margin-top-mini {
+    margin-top: 0.2em !important;
+}
+
+.m-margin-top-tiny {
+    margin-top: 0.5em !important;
+}
+
+.m-margin-top-small {
+    margin-top: 0.8em !important;
+}
+
+.m-margin-top {
+    margin-top: 1em !important;
+}
+
+.m-margin-top-large {
+    margin-top: 2em !important;
+}
+
+.m-margin-tb-tiny {
+    margin-top: 0.3em !important;
+    margin-bottom: 0.3em !important;
+}
+
+.m-margin-bottom-small {
+    margin-bottom: 0.5em !important;
+}
+
+.m-margin-bottom {
+    margin-bottom: 1em !important;
+}
+
+/*--------opacity--------*/
+.m-opacity-mini {
+    opacity: 0.8 !important;
+}
+
+.m-opacity-tiny {
+    opacity: 0.6 !important;
+}
+
+/*--------icon--------*/
+.m-icon-thin {
+    font-size: .8em !important;
+}
+
+.m-icon-margin-right {
+    margin: 0 .5em 0 0 !important;
+}
+
+.m-icon-detail {
+    margin-left: .5em !important;
+}
+
+/*--------position--------*/
+.m-fixed {
+    position: fixed !important;
+    z-index: 10 !important;
+}
+
+.m-right-bottom {
+    bottom: 0 !important;
+    right: 0 !important;
+}
+
+.m-right-top {
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+}
+
+.m-text-position-aligned {
+    top: .2em !important;
+    position: relative !important;
+}
+
+/*--------display--------*/
+.m-inline-block {
+    display: inline-block !important;
+}
+
+/*--------container--------*/
+.m-container-huge {
+    max-width: 100em !important;
+    margin: auto !important;
+}
+
+.m-container-big {
+    max-width: 80em !important;
+    margin: auto !important;
+}
+
+.m-container {
+    max-width: 72em !important;
+    margin: auto !important;
+}
+
+.m-container-small {
+    max-width: 60em !important;
+    margin: auto !important;
+}
+
+/*--------shadow--------*/
+.m-shadow-small {
+    -webkit-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+/*--------color--------*/
+.m-black {
+    color: #333 !important;
+}
+
+.m-teal {
+    color: #00B5AD;
+}
+
+.m-mobile-show {
+    display: none !important;
+}
+
+@media screen and (max-width: 768px) {
+    .m-mobile-hide {
+        display: none !important;
+    }
+
+    .m-mobile-show {
+        display: block !important
+    }
+
+    .m-padded-lr-responsive {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .m-padded-lr-responsive-mini {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .m-padded-lr-responsive-small {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .m-mobile-wide {
+        width: 100% !important;
+    }
+
+    .m-mobile-right {
+        float: right !important;
+    }
+
+    .ui.table:not(.unstackable) tr .m-th-overflow-hidden, .ui.table:not(.unstackable) tr .m-td-overflow-hidden {
+        display: none!important;
+    }
+}
+
+/*--------border--------*/
+.m-border-size {
+    border-width: 0 !important;
+}
+
+.m-border-radius {
+    border-radius: 0 !important;
+}
+
+.m-attached-lt {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+}
+
+.m-attached-rt {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+.m-a-teal-style {
+    color: #661214;
+}
+
+.m-a-teal-style:hover {
+    color: #136656;
+}
+
+.m-blogger-icon {
+    padding: 0.2em !important;
+    vertical-align: text-bottom !important;
+}
+
+.m-td-overflow-hidden {
+    max-width: 0 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;/* 内容超出宽度时隐藏超出部分的内容 */
+    text-align: center !important;
+    text-overflow: ellipsis !important;/* 当对象内文本溢出时显示省略标记(...) ；需与overflow:hidden;一起使用。*/
+}
+
+.m-mobile-flex-wrap{
+    -ms-flex-wrap: wrap !important;
+    flex-wrap: wrap !important;
+}
+
+/*------ 文件上传样式 ------*/
+.file {
+    position: relative;
+    overflow: hidden;
+    text-indent: 0;
+    cursor: pointer !important;
+}
+.file input {
+    font-size: 3rem !important;
+    position: absolute;
+    cursor: pointer !important;
+    right: 0;
+    top: 0;
+    min-height: 1em;
+    opacity: 0;
+}

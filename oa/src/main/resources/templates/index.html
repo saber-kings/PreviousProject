@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh_CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{_fragments :: head(~{::title})}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>首页</title>
+    <!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" integrity="sha256-9mbkOfVho3ZPXfM7W8sV2SndrGDuh7wuyLjtsWeTI1Q=" crossorigin="anonymous" />-->
+    <link rel="stylesheet" href="../static/dist/semantic.min.css"/>
+    <link rel="stylesheet" href="../static/css/me.css"/>
+</head>
+<body>
+
+<!--导航-->
+<nav th:replace="~{_fragments :: menu(0)}" class="ui inverted attached segment m-padded-tb-mini m-shadow-small">
+    <div class="ui container">
+        <div class="ui inverted secondary stackable menu">
+            <h2 class="ui header item m-top-logo m-padded-mini m-text-thin">
+                <img src="../static/images/logo.png" alt="" class="image rounded">
+                &ensp;人事管理系统
+            </h2>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini user icon"></i>
+                用户
+            </a>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini sitemap icon"></i>
+                部门
+            </a>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini id badge icon"></i>
+                职位
+            </a>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini users icon"></i>
+                员工
+            </a>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini bullhorn icon"></i>
+                公告
+            </a>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini download icon"></i>
+                下载
+            </a>
+            <div class="m-item right menu m-mobile-hide">
+                <div class="ui dropdown item">
+                    <div class="text">
+                        <img class="ui avatar image" src="https://picsum.photos/id/1005/100/100">
+                        <span>Test</span>
+                    </div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <a href="#" class="item">注销</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="javascript:;" class="ui menu toggle black icon button m-right-top m-mobile-show">
+        <i class="sidebar icon"></i>
+    </a>
+</nav>
+
+<br><br><br>
+
+<!--中间内容-->
+<div class="m-container-small m-padded-tb-big animated fadeIn">
+    <div class="segment info"></div>
+    <br>
+    <div class="ui container">
+        <div class="ui success large message m-text-font-default">
+            <h3>Hi,</h3>
+            <p><span th:text="${session.user.username}">李仁密</span>，欢迎登录！</p>
+        </div>
+
+        <img src="https://picsum.photos/id/1005/1000/400"
+             th:src="|${session.user.avatar}/1000/400|"
+             alt="" class="ui rounded bordered fluid image">
+    </div>
+    <br><br>
+</div>
+
+<br><br><br>
+
+<!--底部-->
+<footer th:replace="~{_fragments :: footer}" class="ui inverted vertical segment m-padded-tb">
+    <div class="ui center aligned container">
+        <p class="m-text-thin m-text-space m-opacity-tiny">
+            Copyright © 2019 Hrm · 鲁ICP备19001733号-1 · All Rights Reserved Yan Zhaofei
+        </p>
+    </div>
+</footer>
+
+<!--/*/<th:block th:replace="~{_fragments :: script}">/*/-->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.2/dist/jquery.min.js"></script>
+<script src="../static/dist/semantic.min.js" th:src="@{/dist/semantic.min.js}"></script>
+<!--/*/</th:block>/*/-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js" integrity="sha256-t8GepnyPmw9t+foMh3mKNvcorqNHamSKtKRxxpUEgFI=" crossorigin="anonymous"></script>-->
+</body>
+</html>

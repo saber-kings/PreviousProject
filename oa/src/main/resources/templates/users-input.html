@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh_CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{_fragments :: head(~{::title})}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${user.id==null} ? '新增用户' : '修改用户'">新增用户</title>
+    <!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" integrity="sha256-9mbkOfVho3ZPXfM7W8sV2SndrGDuh7wuyLjtsWeTI1Q=" crossorigin="anonymous" />-->
+    <link rel="stylesheet" href="../static/dist/semantic.min.css" />
+    <link rel="stylesheet" href="../static/lib/editormd/css/editormd.min.css" />
+    <link rel="stylesheet" href="../static/css/me.css" />
+</head>
+<body>
+
+<!--导航-->
+<nav th:replace="~{_fragments :: menu(1)}" class="ui inverted attached segment m-padded-tb-mini m-shadow-small">
+    <div class="ui container">
+        <div class="ui inverted secondary stackable menu">
+            <h2 class="ui header item m-top-logo m-padded-mini m-text-thin">
+                <img src="../static/images/logo.png" alt="" class="image rounded">
+                &ensp;人事管理系统
+            </h2>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini user icon"></i>
+                用户
+            </a>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini sitemap icon"></i>
+                部门
+            </a>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini id badge icon"></i>
+                职位
+            </a>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini users icon"></i>
+                员工
+            </a>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini bullhorn icon"></i>
+                公告
+            </a>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini download icon"></i>
+                下载
+            </a>
+            <div class="m-item right menu m-mobile-hide">
+                <div class="ui dropdown item">
+                    <div class="text">
+                        <img class="ui avatar image" src="https://picsum.photos/id/1005/100/100">
+                        <span>Test</span>
+                    </div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <a href="#" class="item">注销</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="javascript:;" class="ui menu toggle black icon button m-right-top m-mobile-show">
+        <i class="sidebar icon"></i>
+    </a>
+</nav>
+<div class="ui attached pointing menu">
+    <div class="ui container">
+        <div class="right menu">
+            <a href="#" th:href="@{/hrm/users/input}" class="blue active item">
+                <span th:text="${user.id==null} ? '新增' : '修改'">新增</span>
+            </a>
+            <a href="#" th:href="@{/hrm/users}" class="item">列表</a>
+        </div>
+    </div>
+</div>
+
+<br><br><br><br><br><br>
+<!--中间内容-->
+<div class="m-container-small m-padded-tb-big animated fadeIn">
+    <div class="segment info"></div>
+    <br>
+    <div class="ui container">
+        <div class="ui secondary stackable segment form">
+            <form id="user-form" action="#" th:object="${user}" th:action="@{/hrm/users}" method="post" class="ui form">
+                <input type="hidden" name="oldLoginName" th:value="${user.getLoginName()}">
+                <input type="hidden" name="id" th:value="*{id}">
+                <div class="two fields">
+                    <div class="required field">
+                        <label>用户名</label>
+                        <div class="ui icon input">
+                            <input type="text" name="username" th:value="*{username}" placeholder="用户名">
+                            <i class="user icon"></i>
+                        </div>
+                    </div>
+                    <div class="required field">
+                        <label>账号</label>
+                        <div class="ui icon input">
+                            <input type="text" name="loginName" th:value="*{loginName}" placeholder="账号">
+                            <i class="user secret icon"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="required field">
+                    <label th:text="*{password==null}?'密码':'原密码'">密码</label>
+                    <div class="ui icon input">
+                        <input type="password" name="password" th:placeholder="*{password==null}?'密码':'原密码'"
+                               placeholder="密码">
+                        <i class="keyboard icon"></i>
+                    </div>
+                </div>
+
+                <div class="required field" th:if="*{password!=null}">
+                    <label>新密码</label>
+                    <div class="ui icon input">
+                        <input type="password" name="newPassword" placeholder="新密码">
+                        <i class="keyboard icon"></i>
+                    </div>
+                </div>
+                <div class="required field">
+                    <label>确认密码</label>
+                    <div class="ui icon input">
+                        <input type="password" name="confirmPassword" placeholder="确认密码">
+                        <i class="keyboard icon"></i>
+                    </div>
+                </div>
+
+                <div class="required field">
+                    <div class="ui left labeled input">
+                        <label class="ui blue basic label">头像</label>
+                        <div class="ui fluid selection dropdown">
+                            <input type="hidden" name="avatar" th:value="*{avatar}!=null ? *{avatar} : null">
+                            <i class="dropdown icon"></i>
+                            <div class="default text">头像引用地址</div>
+                            <div class="menu">
+                                <div th:each="avatarUrl : ${avatarUrls}" class="item" data-value="1"
+                                     th:data-value="${avatarUrl}" th:text="${avatarUrl}">
+                                    错误日志
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="inline fields" th:if="${user.loginName!=session.user.loginName}">
+                    <div class="field">
+                        <div class="ui checkbox">
+                            <input type="checkbox" id="status" name="status" th:checked="*{status}"
+                                   checked class="hidden">
+                            <label for="status">审核</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ui error message"></div>
+                <!--/*/
+                    <div class="ui negative message" th:if="${#fields.hasErrors('loginName')}">
+                        <i class="close icon"></i>
+                        <div class="header">验证失败:</div>
+                        <p th:errors="*{loginName}">提交的信息不符合规则</p>
+                    </div>
+                /*/-->
+
+                <div class="ui right aligned container">
+                    <button type="button" class="ui button" onclick="window.history.go(-1)">返回</button>
+                    <button type="button" th:if="${session.user.status||user.loginName==session.user.loginName}" class="ui reset orange button">重置</button>
+                    <button type="button" th:if="${session.user.status||user.loginName==session.user.loginName}" id="publish-btn" class="ui blue button">提交</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<br><br><br><br><br><br>
+<!--底部-->
+<footer th:replace="~{_fragments :: footer}" class="ui inverted vertical segment m-padded-tb">
+    <div class="ui center aligned container">
+        <p class="m-text-space m-opacity-tiny">
+            Copyright © 2019 Hrm · 鲁ICP备19001733号-1 · All Rights Reserved Yan Zhaofei
+        </p>
+    </div>
+</footer>
+
+<!--/*/<th:block th:replace="~{_fragments :: script}">/*/-->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.2/dist/jquery.min.js"></script>
+<script src="../static/dist/semantic.min.js"></script>
+<script src="../static/lib/editormd/editormd.min.js"></script>
+<!--/*/</th:block>/*/-->
+<script th:inline="javascript">
+
+    $('#publish-btn').click(function () {
+        const userId = /*[[${user.id}]]*/"";
+        const confirmPassword = $("[name='confirmPassword']");
+        const message = $(".ui.error.message");
+        if (userId == null) {
+            if ($("[name='password']").val() !== confirmPassword.val()) {
+                message.show();
+                message.append("<li><pseudo:before>请保证两次输入密码的一致性!</pseudo:before></li>");
+                confirmPassword.focus();
+            } else {
+                if ($('.ui.form').form({
+                    fields: {
+                        username: {
+                            identifier: 'username',
+                            rules: [{
+                                type: 'empty',
+                                prompt: '请输入用户名'
+                            }]
+                        },
+                        loginName: {
+                            identifier: 'loginName',
+                            rules: [
+                                {
+                                    type: 'empty',
+                                    prompt: '请输入账号'
+                                },
+                                {
+                                    type: 'length[4]',
+                                    prompt: '账号长度最少为四位'
+                                }
+                            ]
+                        },
+                        password: {
+                            identifier: 'password',
+                            rules: [
+                                {
+                                    type: 'empty',
+                                    prompt: '请输入密码'
+                                },
+                                {
+                                    type: 'length[6]',
+                                    prompt: '密码长度最少为六位'
+                                }
+                            ]
+                        },
+                        avatar: {
+                            identifier: 'avatar',
+                            rules: [{
+                                type: 'empty',
+                                prompt: '请选择头像引用地址'
+                            }]
+                        }
+                    }
+                })) {
+                    $('#user-form').submit();
+                }
+            }
+        } else {
+            const newPassword = $("[name='newPassword']");
+            const newPasswordVal = newPassword.val();
+            if (newPasswordVal.length < 6) {
+                message.show();
+                message.append("<li>密码长度最少为六位!</li>");
+                newPassword.focus();
+            } else {
+                if (newPasswordVal !== confirmPassword.val()) {
+                    message.show();
+                    message.append("<li><pseudo:before>请保证两次输入密码的一致性!<pseudo:before></li>");
+                    confirmPassword.focus();
+                } else {
+                    if ($('.ui.form').form({
+                        fields: {
+                            username: {
+                                identifier: 'username',
+                                rules: [{
+                                    type: 'empty',
+                                    prompt: '请输入用户名'
+                                }]
+                            },
+                            loginName: {
+                                identifier: 'loginName',
+                                rules: [
+                                    {
+                                        type: 'empty',
+                                        prompt: '请输入账号'
+                                    },
+                                    {
+                                        type: 'length[4]',
+                                        prompt: '账号长度最少为四位'
+                                    }
+                                ]
+                            },
+                            password: {
+                                identifier: 'password',
+                                rules: [
+                                    {
+                                        type: 'empty',
+                                        prompt: '请输入密码'
+                                    },
+                                    {
+                                        type: 'length[6]',
+                                        prompt: '密码长度最少为六位'
+                                    }
+                                ]
+                            },
+                            avatar: {
+                                identifier: 'avatar',
+                                rules: [{
+                                    type: 'empty',
+                                    prompt: '请选择头像引用地址'
+                                }]
+                            }
+                        }
+                    })) {
+                        $('#user-form').submit();
+                    }
+                }
+            }
+        }
+    });
+
+    //消息提示关闭初始化
+    $('.message .close')
+        .on('click', function () {
+            $(this)
+                .closest('.message')
+                .transition('fade')
+            ;
+        })
+    ;
+
+</script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js" integrity="sha256-t8GepnyPmw9t+foMh3mKNvcorqNHamSKtKRxxpUEgFI=" crossorigin="anonymous"></script>-->
+</body>
+</html>

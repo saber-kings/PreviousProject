@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="zh_CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{_fragments :: head(~{::title})}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>员工管理</title>
+    <!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" integrity="sha256-9mbkOfVho3ZPXfM7W8sV2SndrGDuh7wuyLjtsWeTI1Q=" crossorigin="anonymous" />-->
+    <link rel="stylesheet" href="../static/dist/semantic.min.css"/>
+    <link rel="stylesheet" href="../static/css/me.css"/>
+</head>
+<body>
+
+<!--导航-->
+<nav th:replace="~{_fragments :: menu(4)}" class="ui inverted attached segment m-padded-tb-mini m-shadow-small">
+    <div class="ui container">
+        <div class="ui inverted secondary stackable menu">
+            <h2 class="ui header item m-top-logo m-padded-mini m-text-thin">
+                <img src="../static/images/logo.png" alt="" class="image rounded">
+                &ensp;人事管理系统
+            </h2>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini user icon"></i>
+                用户
+            </a>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini sitemap icon"></i>
+                部门
+            </a>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini id badge icon"></i>
+                职位
+            </a>
+            <a href="#" class="m-item item m-mobile-hide active">
+                <i class="mini users icon"></i>
+                员工
+            </a>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini bullhorn icon"></i>
+                公告
+            </a>
+            <a href="#" class="m-item item m-mobile-hide">
+                <i class="mini download icon"></i>
+                下载
+            </a>
+            <div class="m-item right menu m-mobile-hide">
+                <div class="ui dropdown item">
+                    <div class="text">
+                        <img class="ui avatar image" src="https://picsum.photos/id/1005/100/100">
+                        <span>Test</span>
+                    </div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <a href="#" class="item">注销</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="javascript:;" class="ui menu toggle black icon button m-right-top m-mobile-show">
+        <i class="sidebar icon"></i>
+    </a>
+</nav>
+<div class="ui attached pointing menu">
+    <div class="ui container">
+        <div class="right menu">
+            <a href="#" th:if="${session.user.status}" th:href="@{/hrm/employees/input}" class="item">新增</a>
+            <a href="#" th:href="@{/hrm/employees}" class="blue active item">列表</a>
+        </div>
+    </div>
+</div>
+
+<br><br><br><br>
+<div th:if="${page.content.size()}<4">
+    <br><br><br><br><br>
+</div>
+<div class="total br" style="display: none;">
+    <br><br><br><br><br>
+</div>
+
+<!--中间内容-->
+<div class="m-container-huge m-padded-tb-big animated fadeIn">
+    <div class="segment info"></div>
+    <br>
+    <div class="ui container" style="width: 1200px;">
+        <!--header-->
+        <div id="query-form" class="ui secondary stackable center aligned segment form">
+            <input type="hidden" name="page">
+            <div class="inline fields m-mobile-flex-wrap" style="margin: 0 0 0.1em !important;">
+                <div class="field m-padded-tb-mini">
+                    <input type="text" name="name" placeholder="员工名">
+                </div>
+                <div class="field m-padded-tb-mini">
+                    <input type="text" name="empId" placeholder="员工编号">
+                </div>
+                <div class="field m-padded-tb-mini">
+                    <input type="text" maxlength="11" onkeyup="this.value=this.value.replace(/\D/g,'')"
+                           name="phone" placeholder="手机">
+                </div>
+                <div class="field m-padded-tb-mini">
+                    <div class="ui labeled action input">
+                        <div class="ui dept selection dropdown m-attached-rt">
+                            <input type="hidden" name="deptId">
+                            <i class="dropdown icon"></i>
+                            <div class="default text">部门</div>
+                            <div class="menu">
+                                <div th:each="department : ${departments}" class="item" data-value="1"
+                                     th:data-value="${department.id}"
+                                     th:text="${department.departName}">
+                                    秘书部
+                                </div>
+                            </div>
+                        </div>
+                        <button id="dept-clear-btn" class="ui compact button m-attached-lt">clear</button>
+                    </div>
+                </div>
+                <div class="field m-padded-tb-mini">
+                    <div class="ui labeled action input">
+                        <div class="ui job selection dropdown m-attached-rt">
+                            <input type="hidden" name="jobId">
+                            <i class="dropdown icon"></i>
+                            <div class="default text">职位</div>
+                            <div class="menu">
+                                <div th:each="job : ${jobs}" class="item" data-value="1" th:data-value="${job.id}"
+                                     th:text="${job.name}">
+                                    Java开发工程师
+                                </div>
+                            </div>
+                        </div>
+                        <button id="job-clear-btn" class="ui compact button m-attached-lt">clear</button>
+                    </div>
+                </div>
+                <div class="field m-padded-tb-mini">
+                    <div class="ui labeled action input">
+                        <div class="ui sex selection dropdown m-attached-rt">
+                            <input type="hidden" name="sex">
+                            <div class="default text">性别</div>
+                            <i class="dropdown icon"></i>
+                            <div class="menu">
+                                <div class="item" data-value="1">
+                                    男
+                                </div>
+                                <div class="item" data-value="0">
+                                    女
+                                </div>
+                            </div>
+                        </div>
+                        <button id="sex-clear-btn" class="ui compact button m-attached-lt">clear</button>
+                    </div>
+                </div>
+                <div class="field m-padded-tb-mini">
+                    <button type="button" id="search-btn" class="ui mini blue button">
+                        <i class="search icon"></i>搜索
+                    </button>
+                    <button th:if="${session.user.status}" onclick="getExcel()" class="ui mini secondary button">
+                        导出数据
+                    </button>
+                    <button th:if="${session.user.status}" onclick="importData()" class="ui mini button">
+                        导入数据
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="ui dimmer modals page transition visible active animated fadeIn">
+            <div class="ui small ifDelete modal transition visible active" style="margin-top: -98px;">
+                <i class="close icon"></i>
+                <div class="header">删除确认</div>
+                <div class="content">
+                    <p>你确定删除这些员工的信息吗？</p>
+                </div>
+                <div class="actions">
+                    <div class="ui negative right labeled icon button">
+                        取消
+                        <i class="remove icon"></i>
+                    </div>
+                    <div class="ui positive right labeled icon button">
+                        确定
+                        <i class="checkmark icon"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="ui small modal transition visible active message">
+                <i class="close icon"></i>
+                <div class="header">提示:</div>
+                <div class="content">
+                    <!--/*@thymesVar id="message" type="java.lang.String"*/-->
+                    <p>删除成功！</p>
+                </div>
+                <div class="actions">
+                    <div class="ui positive right labeled icon button">
+                        确定
+                        <i class="checkmark icon"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="ui small modal transition visible active form">
+                <i class="close icon"></i>
+                <div class="header">导入数据:</div>
+                <div class="content">
+                    <a href="#" class="ui mini green button" th:href="@{/hrm/employees/getImpDatXls}">模板</a><br><br>
+                    <div class="inline fields" style="position: relative;">
+                        <div class="required field">
+                            <a href="javascript:;" class="ui mini primary button file">选择文件
+                                <input id="file" type="file" name="file">
+                                <span id="file-sub" class="ui center aligned"></span>
+                            </a>
+                        </div>
+                        <div class="field">
+                            <button type="button" id="upload" class="ui mini teal button btn-upload"
+                                    style="position: absolute;top: 0;">
+                                上传
+                            </button>
+                        </div>
+                    </div>
+                    <div id="importRet" class="ui message">
+                        <div id="importRet-header" class="header"></div>
+                        <div id="importRet-progress" class="ui progress">
+                            <div class="bar">
+                                <div class="progress"></div>
+                            </div>
+                            <div id="importRet-count" class="label"></div>
+                        </div>
+                        <textarea id="importRet-message" style="color: red;"></textarea>
+                    </div>
+                </div>
+                <div class="actions">
+                    <div onclick="successImp()" class="ui small positive right labeled icon button">
+                        确定
+                        <i class="checkmark icon"></i>
+                    </div>
+                </div>
+            </div>
+            <!--/*@thymesVar id="batchPage" type="java.util.List<cn.saberking.oa.domain.Employee>"*/-->
+            <div class="ui long batch modal transition scrolling visible active" style="top: 80px;">
+                <i class="close icon"></i>
+                <div class="header">查看员工详细信息</div>
+                <div class="content" id="batchList-id">
+                    <div class="description" id="batch-employee-info">
+                        <div th:fragment="batchList" class="ui secondary stackable segment form"
+                             th:each="emp: ${batchPage}">
+                            <div class="ui header" th:text="|员工${emp.name}的信息|">模态框标题</div>
+                            <div class="two fields">
+                                <div class="field">
+                                    <label>员工编号:</label>
+                                    <div class="ui icon input">
+                                        <input type="text" th:value="${emp.empId}"
+                                               readonly="readonly">
+                                        <i class="sort content ascending icon"></i>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label>姓名:</label>
+                                    <div class="ui icon input">
+                                        <input type="text" th:value="${emp.name}" readonly="readonly">
+                                        <i class="user icon"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="two fields">
+                                <div class="field">
+                                    <label>部门:</label>
+                                    <div class="ui icon input">
+                                        <input type="text" th:value="${emp.department.departName}"
+                                               readonly="readonly">
+                                        <i class="sitemap icon"></i>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label>职位:</label>
+                                    <div class="ui icon input">
+                                        <input type="text" th:value="${emp.job.name}" readonly="readonly">
+                                        <i class="id badge icon"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="two fields">
+                                <div class="field">
+                                    <label>性别:</label>
+                                    <div class="ui icon input">
+                                        <input type="text" th:value="${emp.sex==1?'男':'女'}"
+                                               readonly="readonly">
+                                        <i class="heterosexual icon"></i>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label>年龄:</label>
+                                    <div class="ui icon input">
+                                        <input type="text" th:value="${emp.age}"
+                                               readonly="readonly">
+                                        <i class="birthday icon"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="two fields">
+                                <div class="field">
+                                    <label>手机:</label>
+                                    <div class="ui icon input">
+                                        <input type="text" th:value="${emp.phone}"
+                                               readonly="readonly">
+                                        <i class="mobile icon"></i>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label>邮箱:</label>
+                                    <div class="ui icon input">
+                                        <input type="email" th:value="${emp.email}"
+                                               readonly="readonly">
+                                        <i class="envelope icon"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="two fields">
+                                <div class="field">
+                                    <label>学历:</label>
+                                    <div class="ui icon input">
+                                        <input type="text" th:value="${emp.education}"
+                                               readonly="readonly">
+                                        <i class="student icon"></i>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label>工资:</label>
+                                    <div class="ui icon input">
+                                        <input type="text" th:value="${emp.wage}"
+                                               readonly="readonly">
+                                        <i class="jpy icon"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label>备注:</label>
+                                <textarea th:text="${emp.remark}" readonly="readonly"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="actions">
+                    <div class="ui primary button cancel">确认 <i class="right chevron icon"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="table-container">
+            <table th:fragment="employeeList" class="ui compact blue celled table" style="border-spacing: 2px;">
+                <thead>
+                <tr>
+                    <th class="ui center aligned header m-font-size">
+                        <div class="ui checkbox">
+                            <input type="checkbox" placeholder="全选" id="ca" onclick="pitchOn(this)">
+                            <label class="ss">全选</label>
+                        </div>
+                    </th>
+                    <th></th>
+                    <th class="ui center aligned header m-font-size">编号</th>
+                    <th class="ui center aligned header m-font-size">姓名</th>
+                    <th class="ui center aligned header m-font-size">性别</th>
+                    <th class="ui center aligned header m-font-size">部门</th>
+                    <th class="ui center aligned header m-font-size">职位</th>
+                    <th class="ui center aligned header m-font-size">手机</th>
+                    <th class="ui center aligned header m-font-size">建档日期</th>
+                    <th class="ui center aligned header m-font-size">操作</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="employee,iterStat : ${page.content}">
+                    <!--/*@thymesVar id="employee" type="cn.saberking.oa.domain.Employee"*/-->
+                    <td class="ui center aligned m-font-size-small">
+                        <input type="hidden" name="empIds">
+                        <div class="ui fitted checkbox">
+                            <input type="checkbox" name="cars" th:data-id="*{employee.id}" onclick="isSelectAll()">
+                            <label></label>
+                        </div>
+                    </td>
+                    <td class="ui center aligned m-font-size-small" th:text="${iterStat.count}">1</td>
+                    <td class="ui center aligned m-font-size-small" th:text="${employee.empId}">201701000296</td>
+                    <td class="ui center aligned m-font-size-small" th:text="${employee.name}">栾兆飞</td>
+                    <td class="ui center aligned m-font-size-small" th:text="${employee.sex==1} ? '男' : '女'">男</td>
+                    <td class="ui center aligned m-font-size-small" th:text="${employee.department.departName}">秘书部</td>
+                    <td class="ui center aligned m-font-size-small" th:text="${employee.job.name}">架构师</td>
+                    <td class="ui center aligned m-font-size-small" th:text="${employee.phone}">12345678901</td>
+                    <td class="ui center aligned m-font-size-small"
+                        th:text="${#dates.format(employee.createDate,'yyyy-MM-dd')}">
+                        2019-10-26
+                    </td>
+                    <td class="ui center aligned">
+                        <a href="#" th:if="${session.user.status}"
+                           th:href="@{/hrm/employees/{id}/input(id=${employee.id})}"
+                           class="ui mini blue button">编辑</a>
+                        <a href="#" th:if="${session.user.status}"
+                           th:href="@{/hrm/employees/{id}/delete(id=${employee.id})}"
+                           class="ui mini red button">删除</a>
+                    </td>
+                </tr>
+                </tbody>
+                <script>
+                    function pitchOn(obj) {
+                        const check = $("[name='cars']");
+                        const txt = $(".ss");
+                        if (obj.checked) {
+                            txt[0].innerText = "取消";
+                        } else {
+                            txt[0].innerText = "全选";
+                        }
+                        for (let i = 0; i < check.length; i++) {
+                            check[i].checked = obj.checked;
+                        }
+                    }
+
+                    function isSelectAll() {
+                        let checkedNum = 0;
+                        const check = $("[name='cars']");
+                        const txt = $(".ss");
+                        for (let i = 0; i < check.length; i++) {
+                            if (check[i].checked) {
+                                checkedNum++;
+                            }
+                        }
+                        if (checkedNum === check.length) {
+                            txt[0].innerText = "取消";
+                            $("#ca").prop("checked", true);
+                        } else {
+                            txt[0].innerText = "全选";
+                            $("#ca").prop("checked", false);
+                        }
+                    }
+                </script>
+
+                <tfoot>
+                <tr>
+                    <th colspan="10">
+                        <div class="ui mini pagination menu" th:if="${page.totalPages}>1">
+                            <a onclick="page(this)" th:data-page="0" class="item"
+                               th:unless="${page.first}">
+                                <i class="icon angle double left"></i>
+                            </a>
+                            <a onclick="page(this)" th:data-page="${page.number}-1" class="item"
+                               th:unless="${page.first}">
+                                <i class="icon angle left"></i>
+                            </a>
+                            <a onclick="page(this)" th:data-page="${page.number}+1" class="item"
+                               th:unless="${page.last}">
+                                <i class="icon angle right"></i>
+                            </a>
+                            <a onclick="page(this)" id="last" th:data-page="${page.totalPages}-1" class="item"
+                               th:unless="${page.last}">
+                                <i class="icon angle double right"></i>
+                            </a>
+                            <a href="javascript:;" class="item right attached" style="padding-right: 3px;">
+                                <input id="page-id" type="text" size="2" class="inline input" style="height: 140%;">
+                            </a>
+                            <a onclick="toPage(this)" class="item left attached" style="padding-left: 3px;">跳转</a>
+                            <a href="javascript:;" class="item">
+                                共<span th:text="${page.totalPages}">5</span>页
+                            </a>
+                            <a href="javascript:;" class="item">
+                                总计<span id="totalNum" th:text="${page.totalElements}">10</span>条
+                            </a>
+                        </div>
+                        <a href="#" th:href="@{/hrm/employees/input}"
+                           class="ui mini right floated blue button m-margin-top-mini">新增</a>
+                        <a href="javascript:void(0)" class="ui mini right floated orange button m-margin-top-mini"
+                           iconCls="icon-printer" plain="true"
+                           onclick="RMMPrint()">打印</a>
+                        <button type="button" th:if="${session.user.status}" id="batch-delete" onclick="ifBatchDel()"
+                                class="ui mini right floated yellow button m-margin-top-mini">
+                            <i class="warning sign icon"></i>批量删除
+                        </button>
+                        <button type="button" id="batch-select" onclick="ifSelect()"
+                                class="ui mini right floated teal button m-margin-top-mini">
+                            详细信息
+                        </button>
+                    </th>
+                </tr>
+                </tfoot>
+                <script>
+                    function ifBatchDel() {
+
+                        const check = $("[name='cars']:checked");
+                        if (check.length !== 0) {
+                            $('.ui.small.ifDelete.modal')
+                                .modal({
+                                    closable: false,
+                                    onDeny: function () {
+                                        return true;
+                                    },
+                                    onApprove: function () {
+                                        batchDelete();
+                                        return true;
+                                    }
+                                })
+                                .modal('show')
+                            ;
+
+                        }
+
+                    }
+
+                    function batchDelete() {
+                        const check = $("[name='cars']:checked");
+                        let varEmpIds = '';
+                        const empIds = $("[name='empIds']");
+                        for (let i = 0; i < check.length; i++) {
+                            if (varEmpIds === '') {
+                                varEmpIds = $(check[i]).data("id");
+                            } else {
+                                varEmpIds += ',' + $(check[i]).data("id");
+                            }
+                            console.log(varEmpIds);
+                        }
+                        empIds.val(varEmpIds);
+                        $("#table-container").load(/*[[@{/oa/hrm/employees/delete}]]*/"/oa/hrm/employees/delete", {
+                            empIds: empIds.val(),
+                            name: $("[name='name']").val(),
+                            empId: $("[name='empId']").val(),
+                            phone: $("[name='phone']").val(),
+                            deptId: $("[name='deptId']").val(),
+                            jobId: $("[name='jobId']").val(),
+                            sex: $("[name='sex']").val(),
+                            page: $("[name='page']").val()
+                        });
+                        $('.ui.small.modal.message')
+                            .modal({
+                                closable: false,
+                                onApprove: function () {
+                                    return true;
+                                }
+                            })
+                            .modal('show');
+                        showBr();
+                    }
+                </script>
+            </table>
+
+            <div class="ui success message" th:unless="${#strings.isEmpty(message)}">
+                <i class="close icon"></i>
+                <div class="header">提示:</div>
+                <!--/*@thymesVar id="message" type="java.lang.String"*/-->
+                <p th:text="${message}">恭喜，操作成功！</p>
+            </div>
+            <div class="ui error message" th:unless="${#strings.isEmpty(error)}">
+                <i class="close icon"></i>
+                <div class="header">提示:</div>
+                <!--/*@thymesVar id="error" type="java.lang.String"*/-->
+                <p th:text="${error}">出错啦！</p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div th:if="${page.content.size()}<4">
+    <br><br><br><br><br>
+</div>
+<div class="total br" style="display: none;">
+    <br><br><br><br><br>
+</div>
+<br><br><br><br>
+
+<!--底部-->
+<footer th:replace="~{_fragments :: footer}" class="ui inverted vertical segment m-padded-tb">
+    <div class="ui center aligned container">
+        <p class="m-text-space m-opacity-tiny">
+            Copyright © 2019 Hrm · 鲁ICP备19001733号-1 · All Rights Reserved Yan Zhaofei
+        </p>
+    </div>
+</footer>
+<!--/*/<th:block th:replace="~{_fragments :: script}">/*/-->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.2/dist/jquery.min.js"></script>
+<script src="../static/dist/semantic.min.js" th:src="@{/dist/semantic.min.js}"></script>
+<script src="../static/js/jquery.jqprint-0.3.js" th:src="@{/js/jquery.jqprint-0.3.js}"></script>
+<!--/*/</th:block>/*/-->
+<script>
+
+    $('.ui.dimmer.modals.page').modal('hide');
+    $('.ui.small.ifDelete.modal').modal('hide');
+    $('.ui.small.modal.message').modal('hide');
+    $('.ui.small.modal.form').modal('hide');
+    $('.ui.long.batch.modal').modal('hide');
+
+    function ifSelect() {
+        const check = $("[name='cars']:checked");
+        let varEmpIds = '';
+        const empIds = $("[name='empIds']");
+        for (let i = 0; i < check.length; i++) {
+            if (varEmpIds === '') {
+                varEmpIds = $(check[i]).data("id");
+            } else {
+                varEmpIds += ',' + $(check[i]).data("id");
+            }
+        }
+        empIds.val(varEmpIds);
+        if (empIds.val() !== '') {
+            $("#batch-employee-info").load(/*[[@{/oa/hrm/employees/batchSelect}]]*/"/oa/hrm/employees/batchSelect", {
+                empIds: empIds.val()
+            });
+            $('.ui.dimmer.modals.page').css('overflow-y', 'scroll');
+            $('.ui.long.batch.modal').modal('show');
+        }
+    }
+
+    $(".ui.primary.button.cancel")
+        .on('click', function () {
+            $('.ui.long.batch.modal').modal('hide');
+        });
+
+    //消息提示关闭初始化
+    $('.message .close')
+        .on('click', function () {
+            $(this)
+                .closest('.message')
+                .transition('fade')
+            ;
+        })
+    ;
+
+    $('#dept-clear-btn')
+        .on('click', function () {
+            $('.ui.dept.dropdown')
+                .dropdown('clear')
+            ;
+        })
+    ;
+    $('#job-clear-btn')
+        .on('click', function () {
+            $('.ui.job.dropdown')
+                .dropdown('clear')
+            ;
+        })
+    ;
+
+    function page(obj) {
+        $("[name='page']").val($(obj).data("page"));
+        loadData();
+        showBr();
+    }
+
+    function showBr() {
+        let thisPageNum = $("#totalNum").text()%8;
+        let last = $("#last").length>0;
+        if (last){
+            if (thisPageNum>=0&&thisPageNum<=5) {
+                $(".total.br").show();
+            } else {
+                $(".total.br").hide();
+            }
+        } else {
+            $(".total.br").hide();
+        }
+    }
+
+    $('#search-btn').click(function () {
+        $("[name='page']").val(0);
+        loadData();
+        $(".total.br").show();
+    });
+
+    function toPage() {
+        let page = $("#page-id").val();
+        if (page !== "") {
+            $("[name='page']").val(page - 1);
+            loadData();
+            showBr();
+        }
+    }
+
+    function loadData() {
+        $("#table-container").load(/*[[@{/oa/hrm/employees/search}]]*/"/oa/hrm/employees/search", {
+            name: $("[name='name']").val(),
+            empId: $("[name='empId']").val(),
+            phone: $("[name='phone']").val(),
+            deptId: $("[name='deptId']").val(),
+            jobId: $("[name='jobId']").val(),
+            sex: $("[name='sex']").val(),
+            page: $("[name='page']").val()
+        });
+    }
+
+
+    function importData() {
+        $('.ui.small.modal.form').modal('show');
+        $("#importRet").hide();
+    }
+
+    function getExcel() {
+        const url = /*[[@{/oa/hrm/employees/getExcel}]]*/"/oa/hrm/employees/getExcel";
+        const name = $("[name='name']").val();
+        const empId = $("[name='empId']").val();
+        const phone = $("[name='phone']").val();
+        const deptId = $("[name='deptId']").val();
+        const jobId = $("[name='jobId']").val();
+        const sex = $("[name='sex']").val();
+        const form = $(
+            `<form>
+                <input type='text' name='name' value='${name}' >
+                <input type='text' name='empId' value='${empId}' >
+                <input type='text' name='phone' value='${phone}' >
+                <input type='text' name='deptId' value='${deptId}' >
+                <input type='text' name='jobId' value='${jobId}' >
+                <input type='text' name='sex' value='${sex}' >
+             </form>`
+        ).attr("action", url).attr("method", "post");
+        console.log(form.html());
+        form.appendTo('body').submit().remove();
+    }
+
+    const arr = ["xls", "xlsx"];
+
+    $(".ui.primary.button.file").on("change", "input[type='file']", function () {
+        const filePath = $(this).val();
+        let ret;
+        for (let i = 0; i < arr.length; i++) {
+            if (filePath.indexOf(arr[i]) !== -1) {
+                ret = true;
+            }
+        }
+        if (ret === true) {
+            const arr = filePath.split('\\');
+            const fileName = arr[arr.length - 1];
+            $("#file-sub").html(":&emsp;" + fileName);
+        } else {
+            $("#file-sub").html(":&emsp;您未上传文件，或者您上传文件类型有误！");
+            return false
+        }
+    });
+
+    function startProgress(data) {
+        $('.ui.progress')
+            .progress({
+                percent: data
+            })
+        ;
+    }
+
+    $("#upload").on('click', function () {
+        let $importRet = $('#importRet-progress');
+        if ($importRet.hasClass("error")) {
+            $('#importRet-progress').removeClass("error");
+        }
+        if ($importRet.hasClass("success")) {
+            $('#importRet-progress').removeClass("success");
+        }
+        const formData = new FormData();
+        if ($('#file').val() !== "") {
+            formData.append('file', $('#file')[0].files[0]);
+            $.ajax({
+                url: /*[[@{/oa/hrm/employees/importEmp}]]*/"/oa/hrm/employees/importEmp",
+                type: 'POST',
+                dataType: 'json', //接受数据格式
+                cache: false,
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    console.log(res);
+                    if (res["code"] === 1) {
+                        $("#importRet-header").text("成功:");
+                        $("#importRet-count").text(res["count"]);
+                        if (res["result"] !== "") {
+                            $("#importRet").addClass("error");
+                            $("#importRet-header").text("错误:");
+                            $("#importRet-message").text(res["result"]);
+                            startProgress(res["flag"]);
+                            $importRet.addClass("error");
+                            $("#importRet").show();
+                        } else {
+                            $("#importRet").addClass("success");
+                            startProgress(res["flag"]);
+                            $importRet.addClass("success");
+                            $("#importRet").show();
+                        }
+                    } else if (res["code"] === 0) {
+                        $("#importRet").addClass("error");
+                        $("#importRet-header").text("失败:");
+                        $("#importRet-count").text(res["count"]);
+                        $("#importRet-message").text(res["result"]);
+                        startProgress(res["flag"]);
+                        $importRet.addClass("error");
+                        $("#importRet").show();
+                    }
+                },
+                error: function (err) {
+                    $("#importRet").prop(err);
+                    $("#importRet").show();
+                }
+            });
+        }
+    })
+    ;
+
+    function successImp() {
+        $('.ui.small.modal.form').modal('hide');
+        loadData();
+        showBr();
+    }
+
+    function RMMPrint() {
+        $("#table-container").jqprint();
+    }
+
+    function RMMPrintBatch() {
+        $("#batchList-id").jqprint();
+    }
+</script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js" integrity="sha256-t8GepnyPmw9t+foMh3mKNvcorqNHamSKtKRxxpUEgFI=" crossorigin="anonymous"></script>-->
+</body>
+</html>

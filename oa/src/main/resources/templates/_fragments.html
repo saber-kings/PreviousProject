@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--/*@thymesVar id="title" type="org.w3c.dom.html.HTMLTitleElement"*/-->
+    <title th:replace="${title}">人事管理系统-首页</title>
+    <link rel="icon" href="/images/logo.png" th:href="@{/images/logo.png}" type="image/x-icon"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="Copyright" Content="All Rights Reserved Yan Zhaofei">
+    <meta name="revisit-after" CONTENT="1 days" >
+    <link rel="stylesheet" href="../static/dist/semantic.min.css" th:href="@{/dist/semantic.min.css}"/>
+    <link rel="stylesheet" href="../static/css/typo.css" th:href="@{/css/typo.css}"/>
+    <link rel="stylesheet" href="../static/css/animate.min.css" th:href="@{/css/animate.min.css}"/>
+    <link rel="stylesheet" href="../static/lib/prism/prism.css" th:href="@{/lib/prism/prism.css}"/>
+    <link rel="stylesheet" href="../static/lib/tocbot/tocbot.css" th:href="@{/lib/tocbot/tocbot.css}"/>
+    <link rel="stylesheet" href="../../static/lib/editormd/css/editormd.min.css" th:href="@{/lib/editormd/css/editormd.min.css}"/>
+    <link href="https://fonts.googleapis.com/css?family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui-transition@2.3.1/transition.min.css">
+    <link rel="stylesheet" href="../static/css/me.css" th:href="@{/css/me.css}"/>
+</head>
+<body>
+
+<!--导航-->
+<nav th:fragment="menu(n)" class="ui inverted attached segment m-padded-tb-mini m-shadow-small">
+    <div class="ui container">
+        <div class="ui inverted secondary stackable menu">
+            <h2 class="ui header item m-top-logo m-padded-mini m-text-thin">
+                <img src="../static/images/logo.png" th:src="@{/images/logo.png}" alt="" class="image rounded">
+                &ensp;<span id="m-top-logo" class="m-text-font-01">人事管理系统</span>
+            </h2>
+            <a href="#" th:href="@{/hrm/users}" class="m-item item m-mobile-hide" th:classappend="${n==1} ? 'active'">
+                <i class="user icon"></i>
+                用户
+            </a>
+            <a href="#" th:href="@{/hrm/departments}" class="m-item item m-mobile-hide" th:classappend="${n==2} ? 'active'">
+                <i class="sitemap icon"></i>
+                部门
+            </a>
+            <a href="#" th:href="@{/hrm/jobs}" class="m-item item m-mobile-hide" th:classappend="${n==3} ? 'active'">
+                <i class="id badge icon"></i>
+                职位
+            </a>
+            <a href="#" th:href="@{/hrm/employees}" class="m-item item m-mobile-hide" th:classappend="${n==4} ? 'active'">
+                <i class="users icon"></i>
+                员工
+            </a>
+            <a href="#" th:href="@{/hrm/notices}" class="m-item item m-mobile-hide" th:classappend="${n==5} ? 'active'">
+                <i class="bullhorn icon"></i>
+                公告
+            </a>
+            <a href="#" th:href="@{/hrm/documents}" class="m-item item m-mobile-hide" th:classappend="${n==6} ? 'active'">
+                <i class="file alternate outline icon"></i>
+                资料
+            </a>
+            <a href="#" th:href="@{/hrm/help}" class="m-item item m-mobile-hide" th:classappend="${n==7} ? 'active'">
+                <i class="hire a helper icon"></i>
+                帮助
+            </a>
+            <div class="m-item right menu m-mobile-hide" th:if="${session.user!=null}">
+                <div class="ui dropdown item">
+                    <div class="text">
+                        <img class="ui avatar image" th:src="|${session.user.avatar}/100/100|">
+                        <span th:text="${session.user.username}">Test</span>
+                    </div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <a href="#" th:href="@{/logout}" class="item">注销</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="javascript:;" class="ui menu toggle black icon button m-right-top m-mobile-show">
+        <i class="sidebar icon"></i>
+    </a>
+</nav>
+
+<!--底部-->
+<footer th:fragment="footer" class="ui inverted vertical segment" style="position: unset;">
+    <div class="ui center aligned container">
+        <p class="m-text-space m-opacity-tiny">
+            Copyright © 2019 Hrm · 鲁ICP备19058687号-1 · All Rights Reserved Yan Zhaofei
+        </p>
+    </div>
+</footer>
+
+<th:block th:fragment="script">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.2/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery.scrollto@2.1.2/jquery.scrollTo.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui-transition@2.3.1/transition.min.js"></script>
+    <script src="../static/dist/semantic.min.js" th:src="@{/dist/semantic.min.js}"></script>
+    <script src="../static/lib/prism/prism.js" th:src="@{/lib/prism/prism.js}"></script>
+    <script src="../static/lib/tocbot/tocbot.min.js" th:src="@{/lib/tocbot/tocbot.min.js}"></script>
+    <script src="../static/lib/qrcode/qrcode.min.js" th:src="@{/lib/qrcode/qrcode.min.js}"></script>
+    <script src="../static/lib/waypoints/jquery.waypoints.min.js" th:src="@{/lib/waypoints/jquery.waypoints.min.js}"></script>
+    <script src="../static/js/jquery.jqprint-0.3.js" th:src="@{/js/jquery.jqprint-0.3.js}"></script>
+    <script src="../../static/lib/editormd/editormd.min.js" th:src="@{/lib/editormd/editormd.min.js}"></script>
+    <script>
+        $('.menu.toggle').click(function () {
+            $('.m-item').toggleClass('m-mobile-hide')
+        });
+        $('.ui.dropdown').dropdown({
+            on: 'hover'
+        });
+        $(function() {
+            var userAgent = window.navigator.userAgent.toLowerCase();
+
+            $.browser.msie10 = $.browser.msie && /msie 10\.0/i.test(userAgent);
+            $.browser.msie9 = $.browser.msie && /msie 9\.0/i.test(userAgent);
+            $.browser.msie8 = $.browser.msie && /msie 8\.0/i.test(userAgent);
+            $.browser.msie7 = $.browser.msie && /msie 7\.0/i.test(userAgent);
+            $.browser.msie6 = !$.browser.msie8 && !$.browser.msie7 && $.browser.msie && /msie 6\.0/i.test(userAgent);
+
+            if ($.browser.msie10===false){
+                if ($.browser.msie9===true||$.browser.msie8===true||$.browser.msie7===true||$.browser.msie6===true){
+                    $(".info").html(
+                        "<h3 class='ui error message animated fade left m-text-font-01'>您的浏览器版本太低了，建议您更换到IE10及以上版本，否则会影响到本网站的页面样式和效果！</h3>"
+                    );
+                }
+            }
+        });
+    </script>
+</th:block>
+</body>
+</html>

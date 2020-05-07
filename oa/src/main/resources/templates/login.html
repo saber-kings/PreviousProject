@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh_CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{_fragments :: head(~{::title})}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人事管理系统-登陆</title>
+    <!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" integrity="sha256-9mbkOfVho3ZPXfM7W8sV2SndrGDuh7wuyLjtsWeTI1Q=" crossorigin="anonymous" />-->
+    <link rel="stylesheet" href="../static/dist/semantic.min.css" />
+    <link rel="stylesheet" href="../static/css/me.css" />
+</head>
+<body class="animated fadeIn m-login-bg">
+<div id="bg"></div>
+<br><br><br><br><br>
+<div class="m-container-small m-padded-tb-massive animated fadeIn" style="max-width: 30em !important;">
+    <div class="segment info"></div>
+    <br>
+    <div class="ui container">
+        <div class="ui middle aligned center aligned grid m-login-form-bg">
+            <div class="column">
+                <h2 class="ui teal image header" id="0cacb97f-707a-3b9b-23de-f32c4ccd9d5a">
+<!--                    <img src="assets/images/logo.png" class="image">-->
+                    <div class="content m-text-thin" style="margin-bottom: 2px">
+                        <a class="brand m-text-font-01" href="/hrm/index" th:href="@{/hrm/index}"
+                           style="font-size: 22px; color: #FFF;">
+                             人事管理
+                            <span class="m-text-font-en-oblique" style="color: #FFCC00;">Hrm</span>
+                            <span style="font-size: 13px;">1.0</span>
+                             系统
+                        </a>
+                    </div>
+                </h2>
+                <form class="ui large form" method="post" th:action="@{/login}">
+                    <div class="ui segment">
+                        <div class="field">
+                            <div class="ui left icon input">
+                                <i class="user icon"></i>
+                                <input type="text" name="loginName" placeholder="账号">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui left icon input">
+                                <i class="lock icon"></i>
+                                <input type="password" name="password" placeholder="密码">
+                            </div>
+                        </div>
+                        <button class="ui fluid large teal submit button">登&nbsp;录</button>
+                    </div>
+
+                    <div class="ui error mini message"></div>
+                    <!--/*@thymesVar id="message" type="java.lang.String"*/-->
+                    <div class="ui mini negative message" th:unless="${#strings.isEmpty(message)}" th:text="${message}">用户名和密码错误</div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--/*/<th:block th:replace="~{_fragments :: script}">/*/-->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.2/dist/jquery.min.js"></script>
+<script src="../static/dist/semantic.min.js" th:src="@{/dist/semantic.min.js}"></script>
+<!--/*/</th:block>/*/-->
+
+<script>
+    function getRandomNumberByRange(start, end) {
+        return Math.floor(Math.random() * (end - start) + start)
+    }
+
+    const body = $("body");
+    const bgDiv = $('#bg');
+    let num = getRandomNumberByRange(4, 0);
+    const temp = getRandomNumberByRange(5, 1);
+    body.css({'background-image': 'url(/oa/images/bg/' + temp + '.jpg)'});
+    bgDiv.css({'background-image': 'url(/oa/images/bg/' + temp + '.jpg)'});
+    setInterval(function showAutoBg() {
+        num++;
+        const bgUrl = num + ".jpg";
+        bgDiv
+            .animate({opacity: 0}, 2000, function() {
+                $(this)
+                    .css({'background-image': 'url(/oa/images/bg/' + bgUrl + ')'})
+                    .animate({opacity: 1});
+            });
+        body.css({'background-image': 'url(/oa/images/bg/' + bgUrl + ')'});
+        if(num===4){
+            num = 0;
+        }
+    }, 10000);
+
+    $('.ui.form').form({
+        fields : {
+            username : {
+                identifier : 'loginName',
+                rules : [
+                    {
+                        type: 'empty',
+                        prompt: '请输入账号'
+                    },
+                    {
+                        type: 'minLength[4]',
+                        prompt: '账号长度最少为四位'
+                    }
+                ]
+            },
+            password : {
+                identifier : 'password',
+                rules : [
+                    {
+                        type: 'empty',
+                        prompt: '请输入密码'
+                    },
+                    {
+                        type: 'minLength[6]',
+                        prompt: '密码长度最少为六位'
+                    }
+                ]
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
